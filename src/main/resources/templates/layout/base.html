@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle != null ? pageTitle + ' - Sistema de Seguridad' : 'Sistema de Seguridad'}">Sistema de Seguridad</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" sec:authorize="isAuthenticated()">
+            <div class="sidebar-header">
+                <a href="/dashboard" class="sidebar-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    SecureAdmin
+                </a>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a href="/dashboard" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/dashboard') ? 'active' : ''}">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-section" sec:authorize="hasRole('ADMIN')">
+                    <div class="nav-section-title">Administración</div>
+                    <a href="/admin/usuarios" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/usuarios') ? 'active' : ''}">
+                        <i class="fas fa-users nav-icon"></i>
+                        Usuarios
+                    </a>
+                    <a href="/admin/empresas" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/empresas') ? 'active' : ''}">
+                        <i class="fas fa-building nav-icon"></i>
+                        Empresas
+                    </a>
+                    <a href="/admin/roles" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/roles') ? 'active' : ''}">
+                        <i class="fas fa-user-tag nav-icon"></i>
+                        Roles
+                    </a>
+                    <a href="/admin/permissions" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/permissions') ? 'active' : ''}">
+                        <i class="fas fa-key nav-icon"></i>
+                        Permisos
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Sistema</div>
+                    <a href="/admin/permissions/modulos" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/modulos') ? 'active' : ''}">
+                        <i class="fas fa-cube nav-icon"></i>
+                        Módulos
+                    </a>
+                    <a href="/admin/bitacora" class="nav-item" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/bitacora') ? 'active' : ''}">
+                        <i class="fas fa-history nav-icon"></i>
+                        Bitácora
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar" sec:authorize="isAuthenticated()">
+                <h1 class="page-title" th:text="${pageTitle ?: 'Dashboard'}">Dashboard</h1>
+                
+                <div class="user-menu">
+                    <span sec:authentication="principal.username">Usuario</span>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" title="Abrir menú de usuario">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="sr-only">Abrir menú de usuario</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/profile">
+                                <i class="fas fa-user"></i> Perfil
+                            </a>
+                            <a class="dropdown-item" href="/change-password">
+                                <i class="fas fa-lock"></i> Cambiar Contraseña
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <form th:action="@{/logout}" method="post" style="display: inline;">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Alerts -->
+                <div th:if="${error}" class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span th:text="${error}">Error message</span>
+                </div>
+                
+                <div th:if="${success}" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}">Success message</span>
+                </div>
+                
+                <!-- Page Content -->
+                <div layout:fragment="content">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+    <script layout:fragment="scripts">
+        <!-- Additional scripts will be inserted here -->
+    </script>
+</body>
+</html>

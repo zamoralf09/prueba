@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" 
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalUsuarios}">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-users"></i> Total Usuarios
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" th:text="${usuariosActivos}">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-user-check"></i> Usuarios Activos
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalRoles}">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-user-tag"></i> Total Roles
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value" th:text="${sesionesActivas}">0</div>
+                <div class="stat-label">
+                    <i class="fas fa-desktop"></i> Sesiones Activas
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-history"></i> Actividad Reciente
+                </h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>IP</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="actividad : ${actividadReciente}">
+                            <td th:text="${actividad.usuario}">usuario@ejemplo.com</td>
+                            <td th:text="${actividad.accion}">Login</td>
+                            <td th:text="${actividad.ip}">192.168.1.1</td>
+                            <td th:text="${#temporals.format(actividad.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${actividad.exitoso ? 'badge-success' : 'badge-error'}"
+                                      th:text="${actividad.exitoso ? 'Exitoso' : 'Fallido'}">
+                                    Exitoso
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- System Alerts -->
+        <div class="card" th:if="${alertas != null and !alertas.empty}">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-exclamation-triangle"></i> Alertas del Sistema
+                </h2>
+            </div>
+            
+            <div class="alert-list">
+                <div th:each="alerta : ${alertas}" 
+                     class="alert" 
+                     th:classappend="${alerta.tipo == 'ERROR' ? 'alert-error' : 'alert-warning'}">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span th:text="${alerta.mensaje}">Mensaje de alerta</span>
+                    <small th:text="${#temporals.format(alerta.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
